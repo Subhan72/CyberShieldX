@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberbully Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            padding: 50px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .shield-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+        }
+
+        .shield-icon::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.3;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            animation: slideInUp 0.6s ease-out backwards;
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.1s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 15px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 130px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e8e8e8;
+            border-radius: 15px;
+            font-size: 15px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            padding-right: 50px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 20px;
+            border: 3px dashed #d0d0d0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .file-upload-label:hover::before {
+            left: 100%;
+        }
+
+        .file-upload-label:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .file-upload-label.has-file {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-style: solid;
+        }
+
+        .file-upload-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .file-upload-text {
+            color: #666;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .file-preview {
+            margin-top: 20px;
+            text-align: center;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .file-preview img {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+
+        .file-preview img:hover {
+            transform: scale(1.02);
+        }
+
+        .file-name {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: 700;
+        }
+
+        .input-section {
+            display: none;
+        }
+
+        .input-section.active {
+            display: block;
+        }
+
+        .btn-check {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 15px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-check::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-check:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-check:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 35px;
+            padding: 28px;
+            border-radius: 20px;
+            display: none;
+            animation: slideInUp 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: ripple 3s ease-out infinite;
+        }
+
+        .result.safe {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 3px solid #28a745;
+            box-shadow: 0 10px 40px rgba(40, 167, 69, 0.2);
+        }
+
+        .result.danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 3px solid #dc3545;
+            box-shadow: 0 10px 40px rgba(220, 53, 69, 0.2);
+        }
+
+        .result.info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 3px solid #17a2b8;
+            box-shadow: 0 10px 40px rgba(23, 162, 184, 0.2);
+        }
+
+        .result-title {
+            font-weight: 800;
+            font-size: 22px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .result.safe .result-title {
+            color: #28a745;
+        }
+
+        .result.danger .result-title {
+            color: #dc3545;
+        }
+
+        .result.info .result-title {
+            color: #17a2b8;
+        }
+
+        .result-message {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .confidence-bar {
+            background: rgba(0, 0, 0, 0.1);
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s linear infinite;
+        }
+
+        .result.safe .confidence-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .result.danger .confidence-fill {
+            background: linear-gradient(90deg, #dc3545, #e74c3c);
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 700;
+            display: none;
+            margin-top: 15px;
+            font-size: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: ellipsis 1.5s steps(4) infinite;
+        }
+
+        @keyframes ellipsis {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        .model-status {
+            font-size: 13px;
+            color: #999;
+            margin-top: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        .model-status::before {
+            content: '●';
+            margin-right: 6px;
+            font-size: 12px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .model-status.active {
+            color: #28a745;
+            background: #d4edda;
+        }
+
+        .model-status.inactive {
+            color: #dc3545;
+            background: #f8d7da;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 25px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .shield-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="shield-icon">🛡️</div>
+            <h1>CyberShieldX</h1>
+            <p>Analyze text & images for harassment and cyberbullying</p>
+        </div>
+
+        <form id="detectionForm">
+            <div class="form-group">
+                <label for="modelSelect">Select Detection Model:</label>
+                <select id="modelSelect" required>
+                    <option value="harassment">Harassment Detection ✓</option>
+                    <option value="hatespeech">Hate Speech Detection ✓</option>
+                    <option value="flaming">Flaming Detection ✓</option>
+                    <option value="sexual_harassment">Sexual Harassment Detection ✓</option>
+                    <option value="meme">Hateful Meme Detection ✓</option>
+                </select>
+                <div class="model-status active" id="modelStatus">Model Active</div>
+            </div>
+
+            <!-- Text Input Section -->
+            <div class="input-section active" id="textInputSection">
+                <div class="form-group">
+                    <label for="textInput">Enter Text to Analyze:</label>
+                    <textarea 
+                        id="textInput" 
+                        placeholder="Type or paste text here... (Roman Urdu or English)"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Image Input Section -->
+            <div class="input-section" id="imageInputSection">
+                <div class="form-group">
+                    <label>Upload Meme Image:</label>
+                    <div class="file-upload">
+                        <input type="file" id="imageInput" accept="image/*">
+                        <label for="imageInput" class="file-upload-label" id="fileLabel">
+                            <div class="file-upload-content">
+                                <div class="file-upload-icon">🖼️</div>
+                                <div class="file-upload-text">Click to upload or drag & drop</div>
+                                <div class="file-upload-text" style="font-size: 12px; margin-top: 5px;">
+                                    Supports: JPG, PNG, GIF
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="file-preview" id="filePreview" style="display: none;">
+                        <img id="previewImage" src="" alt="Preview">
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memeTextInput">Meme Text (Optional):</label>
+                    <textarea 
+                        id="memeTextInput" 
+                        placeholder="Enter any text from the meme (optional but recommended for better accuracy)"
+                        style="min-height: 80px;"
+                    ></textarea>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                        💡 Tip: Including the text from the meme improves detection accuracy!
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-check" id="checkBtn">
+                🔍 Check for Cyberbullying
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            Analyzing
+        </div>
+
+        <div class="result" id="result">
+            <div class="result-title" id="resultTitle"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill"></div>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px; color: #666;" id="confidenceText"></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://hirudinoid-unvanquishable-burl.ngrok-free.dev';
+        const form = document.getElementById('detectionForm');
+        const textInput = document.getElementById('textInput');
+        const imageInput = document.getElementById('imageInput');
+        const memeTextInput = document.getElementById('memeTextInput');
+        const modelSelect = document.getElementById('modelSelect');
+        const checkBtn = document.getElementById('checkBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultMessage = document.getElementById('resultMessage');
+        const confidenceFill = document.getElementById('confidenceFill');
+        const confidenceText = document.getElementById('confidenceText');
+        const modelStatus = document.getElementById('modelStatus');
+        const textInputSection = document.getElementById('textInputSection');
+        const imageInputSection = document.getElementById('imageInputSection');
+        const fileLabel = document.getElementById('fileLabel');
+        const filePreview = document.getElementById('filePreview');
+        const previewImage = document.getElementById('previewImage');
+        const fileName = document.getElementById('fileName');
+
+        let selectedFile = null;
+
+        // Model name mapping for display
+        const modelNames = {
+            'harassment': 'Harassment',
+            'hatespeech': 'Hate Speech',
+            'flaming': 'Flaming',
+            'sexual_harassment': 'Sexual Harassment',
+            'meme': 'Hateful Content'
+        };
+
+        // Update model status and input type based on selection
+        modelSelect.addEventListener('change', function() {
+            const activeModels = ['harassment', 'hatespeech', 'flaming', 'sexual_harassment', 'meme'];
+            
+            if (this.value === 'meme') {
+                // Show image input, hide text input
+                textInputSection.classList.remove('active');
+                imageInputSection.classList.add('active');
+                modelStatus.className = 'model-status active';
+                modelStatus.textContent = 'Model Active - Image Input';
+            } else if (activeModels.includes(this.value)) {
+                // Show text input, hide image input
+                textInputSection.classList.add('active');
+                imageInputSection.classList.remove('active');
+                modelStatus.className = 'model-status active';
+                modelStatus.textContent = 'Model Active';
+            } else {
+                // Model not available
+                textInputSection.classList.add('active');
+                imageInputSection.classList.remove('active');
+                modelStatus.className = 'model-status inactive';
+                modelStatus.textContent = 'Model Not Yet Trained';
+            }
+        });
+
+        // Handle file upload
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                
+                // Update label
+                fileLabel.classList.add('has-file');
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    filePreview.style.display = 'block';
+                    fileName.textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const modelType = modelSelect.value;
+
+            // Validate input based on model type
+            if (modelType === 'meme') {
+                if (!selectedFile) {
+                    alert('Please upload an image to analyze');
+                    return;
+                }
+            } else {
+                const text = textInput.value.trim();
+                if (!text) {
+                    alert('Please enter some text to analyze');
+                    return;
+                }
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            checkBtn.disabled = true;
+
+            try {
+                let response;
+                
+                if (modelType === 'meme') {
+                    // Send image as multipart form data with optional text
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    
+                    // Add text if provided
+                    const memeText = memeTextInput.value.trim();
+                    if (memeText) {
+                        formData.append('text', memeText);
+                    }
+                    
+                    response = await fetch(`${API_URL}/predict-meme`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    // Send text as JSON
+                    response = await fetch(`${API_URL}/predict`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            text: textInput.value.trim(),
+                            model_type: modelType
+                        })
+                    });
+                }
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                displayResult(data, modelType);
+
+            } catch (error) {
+                console.error('Error:', error);
+                result.className = 'result info';
+                result.style.display = 'block';
+                resultTitle.textContent = '⚠️ Connection Error';
+                resultMessage.textContent = 'Could not connect to the API. Make sure the FastAPI server is running on http://localhost:8000';
+                confidenceFill.style.width = '0%';
+                confidenceText.textContent = '';
+            } finally {
+                loading.style.display = 'none';
+                checkBtn.disabled = false;
+            }
+        });
+
+        function displayResult(data, modelType) {
+            result.style.display = 'block';
+            
+            const modelDisplayName = modelNames[modelType] || 'Content';
+            
+            // Check if model is not trained
+            if (data.confidence === 0 && data.model_type !== 'harassment') {
+                result.className = 'result info';
+                resultTitle.textContent = '🔔 Model Not Available';
+                resultMessage.textContent = data.message;
+                confidenceFill.style.width = '0%';
+                confidenceText.textContent = 'This model has not been trained yet.';
+                return;
+            }
+
+            if (data.is_cyberbully) {
+                result.className = 'result danger';
+                resultTitle.textContent = `⚠️ ${modelDisplayName} Detected`;
+                resultMessage.textContent = data.message;
+            } else {
+                result.className = 'result safe';
+                resultTitle.textContent = `✅ No ${modelDisplayName} Detected`;
+                resultMessage.textContent = data.message;
+            }
+
+            const confidencePercent = (data.confidence * 100).toFixed(1);
+            confidenceFill.style.width = confidencePercent + '%';
+            confidenceText.textContent = `Confidence: ${confidencePercent}%`;
+        }
+    </script>
+</body>
+</html>

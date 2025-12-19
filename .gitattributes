@@ -1,0 +1,56 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.gz binary
+*.7z binary
+*.rar binary
+
+# Model files - treat as binary to avoid line ending issues
+*.safetensors binary
+*.bin binary
+*.pt binary
+*.pth binary
+*.pkl binary
+*.pickle binary
+*.h5 binary
+*.hdf5 binary
+*.onnx binary
+*.tflite binary
+*.pb binary
+*.gguf binary
+*.ggml binary
+
+# Keep JSON config files as text (they're small and need to be readable)
+*.json text eol=lf
+
+# Exclude large model weight files from line ending normalization
+models/**/*.safetensors binary
+models/**/*.bin binary
+models/**/*.pt binary
+models/**/*.pth binary

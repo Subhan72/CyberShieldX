@@ -9,8 +9,9 @@ This directory contains the trained XLM-RoBERTa model for toxic content classifi
 ## What's Included
 
 The following configuration files are included in the repository:
+
 - ✅ `config.json` - Model configuration
-- ✅ `tokenizer_config.json` - Tokenizer configuration  
+- ✅ `tokenizer_config.json` - Tokenizer configuration
 - ✅ `tokenizer.json` - Tokenizer vocabulary
 - ✅ `special_tokens_map.json` - Special tokens mapping
 - ✅ `classification_report.json` - Model evaluation metrics
@@ -21,6 +22,7 @@ The following configuration files are included in the repository:
 ## What You Need to Add
 
 You need to download and place the following file manually:
+
 - ❌ `model.safetensors` (~1GB) - Model weights
 
 ## How to Get the Model
@@ -95,11 +97,13 @@ models/xlm-roberta-toxic-classifier/
 ## Troubleshooting
 
 **Error: Model file not found**
+
 - Ensure `model.safetensors` is in the correct directory
 - Check file permissions
 - Verify the file is not corrupted
 
 **Error: Model loading fails**
+
 - Ensure all config files are present
 - Check that the model version matches the config files
 - Verify PyTorch/Transformers versions are compatible

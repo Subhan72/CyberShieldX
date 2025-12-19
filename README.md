@@ -208,7 +208,13 @@ pip install fastapi uvicorn pydantic torch transformers numpy emoji pytest pytes
 
 ### Step 4: Download Model
 
-The system requires a fine-tuned XLM-RoBERTa model. Place it in the `models/` directory:
+⚠️ **Important**: The model files are too large for GitHub (1GB+). You need to download them separately.
+
+The system requires a fine-tuned XLM-RoBERTa model. The model weights are not included in this repository due to GitHub's file size limits.
+
+**Option 1: Use Your Own Trained Model**
+
+If you have trained the model, place it in the `models/` directory:
 
 ```bash
 # Model should be located at:
@@ -219,12 +225,38 @@ models/xlm-roberta-toxic-classifier/
 
 ```
 models/xlm-roberta-toxic-classifier/
-├── config.json
-├── model.safetensors (or pytorch_model.bin)
-├── tokenizer_config.json
-├── tokenizer.json
-└── special_tokens_map.json
+├── config.json                    # ✅ Included in repo
+├── model.safetensors              # ❌ Download separately (~1GB)
+├── tokenizer_config.json          # ✅ Included in repo
+├── tokenizer.json                 # ✅ Included in repo
+└── special_tokens_map.json        # ✅ Included in repo
 ```
+
+**Option 2: Download from External Source**
+
+1. Download the model weights from your preferred source (Hugging Face, Google Drive, etc.)
+2. Place `model.safetensors` in `models/xlm-roberta-toxic-classifier/`
+3. Ensure all config files are present (these are included in the repo)
+
+**Option 3: Use Git LFS (For Contributors)**
+
+If you want to include models in the repository, use Git Large File Storage:
+
+```bash
+# Install Git LFS
+git lfs install
+
+# Track model files
+git lfs track "*.safetensors"
+git lfs track "models/**/*.safetensors"
+
+# Add and commit
+git add .gitattributes
+git add models/
+git commit -m "Add model files with LFS"
+```
+
+**Note**: The repository includes all configuration and tokenizer files needed. You only need to add the `model.safetensors` file (approximately 1GB).
 
 ### Step 5: (Optional) Setup LLM Verification
 

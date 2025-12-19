@@ -130,21 +130,25 @@ dmypy.json
 *~
 .DS_Store
 
-# Model files (large files - uncomment if you want to exclude models from git)
-# models/*/
-# !models/.gitkeep
-
-# Model checkpoints and training artifacts
-models/**/checkpoint-*/
+# Model files (large files - excluded from git due to size limits)
+# Keep config and tokenizer files, but exclude large model weights
+models/**/*.safetensors
 models/**/*.pt
 models/**/*.pth
 models/**/*.bin
+models/**/checkpoint-*/
 models/**/optimizer.pt
 models/**/scheduler.pt
 models/**/scaler.pt
 models/**/rng_state.pth
 models/**/trainer_state.json
 models/**/training_args.bin
+
+# Allow model config and tokenizer files (small, needed for setup)
+!models/**/config.json
+!models/**/tokenizer*.json
+!models/**/special_tokens_map.json
+!models/**/tokenizer_config.json
 
 # Training data and outputs
 *.csv
